@@ -1,0 +1,18 @@
+{:paths ["src"]
+ ;; kotobase (kotoba-lang/kotobase) provides the IStore/ITransactionalStore
+ ;; seam (kotobase.store) and the LocalStore oracle (kotobase.local) this
+ ;; library projects the OCI Distribution Spec surface over. Pinned to the
+ ;; same SHA kotoba-lang/kotobase-protocols pins (verified current against
+ ;; kotobase's default branch HEAD on 2026-07-17).
+ :deps {io.github.kotoba-lang/kotobase
+        {:git/sha "bbf57df9dde5c1869182012860129a598382e088"}}
+ ;; First-class runtime is nbb/cljs (repo-wide runtime priority):
+ ;;   nbb --classpath "src:test:<kotobase>/src" bin/run_tests.cljs
+ ;; The :test alias below is the :clj COMPAT suite only — not the
+ ;; primary execution path.
+ :aliases
+ {:test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]
+         :exec-fn cognitect.test-runner.api/test}}}
