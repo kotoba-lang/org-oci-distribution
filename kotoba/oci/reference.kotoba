@@ -63,7 +63,7 @@
 ;; of these grammars -- there were none to copy (ADR-2608261100).
 
 (ns oci.reference
-  (:export [name-problem reference-kind]))
+  (:export [main name-problem reference-kind]))
 
 ;; --- characters --------------------------------------------------------------------
 
@@ -246,3 +246,28 @@
 
           (= elen 0) :invalid-digest
           :else :digest)))))
+
+;; --- the artifact's own conformance check ------------------------------------------
+;;
+;; `main` is the browser profile's entry point -- `runtime/browser-host.mjs`
+;; refuses to instantiate a module without one -- and it is not a stub. It
+;; runs the findings back through the decisions above and answers 0 only
+;; when each still decides the way this object was built to decide, so a
+;; COMPILED artifact can be asked whether it is itself by a host that knows
+;; nothing about registries.
+;;
+;; Three, not ten: the native backends evaluate `main` as a compile-time
+;; oracle with a budget, and ten calls of this shape is `native artifact
+;; oracle evaluation rejected`. The wider check lives in the suite.
+;;
+;; The strings here are short on purpose. A module's fuel is a private
+;; global baked in at compile time and the default is 512, which the suite
+;; measured is enough for an ordinary name and not for a full-length
+;; 128-character tag.
+
+(defn main [] :i64
+  (cond
+    (if (= (name-problem "a/../b") :parent-traversal) false true) 1
+    (if (= (name-problem "MyApp") :invalid-character) false true) 2
+    (if (= (reference-kind "-bad..tag") :invalid-tag) false true) 3
+    :else 0))
