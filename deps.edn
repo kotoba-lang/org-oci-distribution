@@ -4,7 +4,12 @@
  ;; library projects the OCI Distribution Spec surface over. Pinned to the
  ;; same SHA kotoba-lang/kotobase-protocols pins (verified current against
  ;; kotobase's default branch HEAD on 2026-07-17).
- :deps {io.github.kotoba-lang/kotobase
+ :deps {
+        ;; kotoba.lang.text, not clojure.string. Pinned as an explicit floor:
+        ;; tools.deps takes the NEWEST sha it is shown, so without a floor here
+        ;; this repo silently rides whatever a sibling happens to name.
+        io.github.kotoba-lang/text {:git/sha "73bdb13ae7a3d004b44bca08be03a3191157a38f"}
+       io.github.kotoba-lang/kotobase
         {:git/sha "bbf57df9dde5c1869182012860129a598382e088"}}
  ;; First-class runtime is nbb/cljs (repo-wide runtime priority):
  ;;   nbb --classpath "src:test:<kotobase>/src" bin/run_tests.cljs

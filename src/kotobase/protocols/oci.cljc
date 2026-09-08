@@ -73,7 +73,7 @@
     unreferenced blobs). This handler stores and digest-validates
     opaque manifest bytes; it does not parse or interpret OCI manifest
     JSON structure."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [kotobase.protocols.http :as http]
             [kotobase.protocols.oci.digest :as digest]
             [kotobase.store :as st]))
