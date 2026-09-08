@@ -32,7 +32,7 @@
 
 (ns oci.reference-kotoba-test
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [clojure.test :refer [deftest is testing]]
             [kotoba.compiler.core :as compiler]
             [kotoba.kir :as ir]
@@ -149,7 +149,7 @@
         "the algorithm is lowercase and sha256's encoding is 64 lowercase hex")
     (is (= :invalid-digest (ref-kind (str "sha256:" (apply str (repeat 63 \a)))))
         "sixty-three is not sixty-four")
-    (is (= :invalid-digest (ref-kind (str "sha256:" (str/upper-case hex64))))
+    (is (= :invalid-digest (ref-kind (str "sha256:" (str/upper hex64))))
         "nor is uppercase hex")
     (is (= :digest (ref-kind (str "sha512:" (apply str (repeat 128 \a))))))
     (is (= :invalid-digest (ref-kind (str "sha512:" hex64))) "sha512 is 128")

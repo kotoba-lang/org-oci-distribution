@@ -1,5 +1,5 @@
 (ns kotobase.protocols.oci-test
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [clojure.test :refer [deftest is testing]]
             [kotobase.local :as local]
             [kotobase.protocols.oci :as oci]
