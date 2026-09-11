@@ -19,4 +19,4 @@ jobs:
         with:
           node-version: 22
       - run: npm install --global nbb
-      - run: nbb --classpath "src:test:.deps/kotobase/src" bin/run_tests.cljs
+      - run: nbb --classpath "src:test:.deps/kotobase/src" bin/run_tests.cljk

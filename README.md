@@ -89,7 +89,7 @@ Docker/OCI repository-name convention.
   identity (§3.3), a real CID-shaped hash — unlike the non-cryptographic
   FNV-1a fingerprints `kotobase-protocols/hash.cljc` uses for S3 ETags,
   which are explicitly documented as NOT CIDs. See
-  `src/kotobase/protocols/oci/digest.cljc`.
+  `src/kotobase/protocols/oci/digest.cljk`.
 - **No Referrers API** (`GET /v2/<name>/referrers/<digest>`) yet — not
   required for the v0.1 push/pull round trip; follow-up once a concrete
   ORAS/SBOM-discovery consumer needs it.
@@ -105,7 +105,7 @@ First-class runtime is **nbb/cljs** (repo-wide runtime priority):
 
 ```bash
 git clone https://github.com/kotoba-lang/kotobase .deps/kotobase
-nbb --classpath "src:test:.deps/kotobase/src" bin/run_tests.cljs
+nbb --classpath "src:test:.deps/kotobase/src" bin/run_tests.cljk
 ```
 
 The `:test` alias in `deps.edn` is the JVM **compat** suite only.
