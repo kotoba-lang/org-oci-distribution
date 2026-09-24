@@ -31,7 +31,7 @@
 ;;     The docstring is what is wrong.
 
 (ns oci.reference-kotoba-test
-  (:require [clojure.java.io :as io]
+  (:require [kotoba.io :as io]
             [kotoba.lang.text :as str]
             [kotoba.test :refer [deftest is testing]]
             [kotoba.compiler.core :as compiler]
@@ -70,7 +70,7 @@
 (defn- pull [c path] (oci/handle c {:method :get :path path}))
 
 (deftest guest-source-is-present
-  (is (.exists guest-file) (str "kotoba object not found at " guest-file)))
+  (is (io/exists? guest-file) (str "kotoba object not found at " guest-file)))
 
 ;; --- finding one: the name -----------------------------------------------------------
 
