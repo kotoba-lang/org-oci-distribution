@@ -1,6 +1,6 @@
 (ns kotobase.protocols.oci-test
   (:require [kotoba.lang.text :as str]
-            [clojure.test :refer [deftest is testing]]
+            [kotoba.test :refer [deftest is testing]]
             [kotobase.local :as local]
             [kotobase.protocols.oci :as oci]
             [kotobase.protocols.oci.digest :as digest]
