@@ -16,14 +16,15 @@
   treats :body as an opaque string; real binary blob bodies are the
   same documented follow-up carve-out http.cljc already declares, see
   kotobase.protocols.oci's namespace docstring)."
-  )
+  
+  (:require [kotoba.bytes :as kbytes]))
 
 (defn sha256-hex
   "Lower-case hex SHA-256 of the UTF-8 bytes of string `s`."
   [s]
   #?(:clj
      (let [d (java.security.MessageDigest/getInstance "SHA-256")
-           bs (.digest d (.getBytes ^String s "UTF-8"))]
+           bs (.digest d (kbytes/utf8-bytes ^String s))]
        (apply str (map #(format "%02x" (bit-and (int %) 0xff)) bs)))
      :cljs
      (let [crypto (js/require "node:crypto")]
