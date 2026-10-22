@@ -119,7 +119,9 @@ look like in OCI (JUN-288; network-awai-apex ADR 0010 §2.2–§2.4):
   (`application/vnd.oci.image.index.v1+json`) with artifactType
   `application/vnd.itonami.app.v1`.
 - `class-annotation-problem`: the `org.itonami.runtime-class` annotation must
-  equal the class the L5 manifest declares (`wasm` / `container` / `microvm`).
+  equal the class the L5 manifest declares (`wasm` / `container`; container
+  is named fune, and container vs microVM is the node's choice — owner
+  2026-10-22 "hako = fune").
 - `digest-problem`: only `sha256:` + 64 lowercase hex is admitted; another
   algorithm is `itonami/unsupported-digest`.
 - `digest-cid` / `cid-digest` / `cid-codec`: a digest and the CIDv1 of the same
@@ -152,8 +154,9 @@ podman run --rm --platform linux/arm64 --network none -e KEXE_CAP_RESOURCES_35="
 ```
 
 Measured 2026-10-22 with amu main `f5b11a08` (root sha256 `8256bfd8…dc7`):
-`:result 31`; a wrong expected CID gives `23`, and admitting a non-canonical
-CID gives `15`. The test vectors are sha256 of `""` and of `"itonami"`, with
+`:result 31`; a wrong expected CID gives `23`, admitting a non-canonical
+CID gives `15`, and (after the two-class change) treating `"microvm"` as a
+class gives `29`. The test vectors are sha256 of `""` and of `"itonami"`, with
 CIDs computed independently. Receipt:
 `docs/evidence/itonami-artifact-selfhost-gate-20261022.edn`. The `.cljk`
 suite above is unchanged and was not run.

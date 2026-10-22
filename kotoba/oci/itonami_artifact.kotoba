@@ -38,11 +38,12 @@
     (if (= artifact-type "application/vnd.itonami.app.v1") "oci/ok" "itonami/not-an-itonami-app")
     "itonami/not-an-image-index"))
 
-;; the tsukasa mask bits: wasm = 1, container = 2, microvm = 4; 0 = unknown
+;; the tsukasa mask bits: wasm = 1, container = 2 (named fune); 0 = unknown.
+;; Owner 2026-10-22 "hako = fune": a Linux OCI image is one class, and
+;; container vs microVM is the node's choice, so "microvm" is not a class.
 (defn runtime-class-code [cls :string] :i64
   (if (= cls "wasm") 1
-    (if (= cls "container") 2
-      (if (= cls "microvm") 4 0))))
+    (if (= cls "container") 2 0)))
 
 ;; ANNOTATED is the OCI annotation, DECLARED the L5 manifest's class.
 (defn class-annotation-problem [annotated :string declared :string] :string
@@ -168,10 +169,11 @@
 (defn test-classes [] :bool
   (if (and (= (runtime-class-code "wasm") 1)
            (= (runtime-class-code "container") 2)
-           (= (runtime-class-code "microvm") 4)
+           (= (runtime-class-code "microvm") 0)
            (= (runtime-class-code "hako") 0)
            (= (class-annotation-problem "wasm" "wasm") "oci/ok")
-           (= (class-annotation-problem "microvm" "microvm") "oci/ok")
+           (= (class-annotation-problem "container" "container") "oci/ok")
+           (= (class-annotation-problem "microvm" "microvm") "itonami/unknown-runtime-class")
            (= (class-annotation-problem "container" "wasm") "itonami/runtime-class-mismatch")
            (= (class-annotation-problem "oci" "wasm") "itonami/unknown-runtime-class")
            (= (class-annotation-problem "wasm" "fune") "itonami/unknown-runtime-class")) true false))
