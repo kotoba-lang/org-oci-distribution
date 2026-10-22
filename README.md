@@ -110,6 +110,54 @@ kbb --backend sci --classpath "src:test:.deps/kotobase/src" bin/run_tests.cljk
 
 The `:test` alias in `deps.edn` is the JVM **compat** suite only.
 
+## Kotoba decisions
+
+`kotoba/oci/itonami_artifact.kotoba` decides what an itonami app release must
+look like in OCI (JUN-288; network-awai-apex ADR 0010 §2.2–§2.4):
+
+- `index-problem`: a release is one image index
+  (`application/vnd.oci.image.index.v1+json`) with artifactType
+  `application/vnd.itonami.app.v1`.
+- `class-annotation-problem`: the `org.itonami.runtime-class` annotation must
+  equal the class the L5 manifest declares (`wasm` / `container` / `microvm`).
+- `digest-problem`: only `sha256:` + 64 lowercase hex is admitted; another
+  algorithm is `itonami/unsupported-digest`.
+- `digest-cid` / `cid-digest` / `cid-codec`: a digest and the CIDv1 of the same
+  bytes share one sha2-256 multihash (codec raw `0x55` or dag-cbor `0x71`,
+  multibase base32). `cid-digest` takes only the canonical spelling.
+
+It is written in the Amu selfhost seed subset, and its gate builds it with the
+pinned selfhost root compiler (no Node.js, nbb, JVM or babashka):
+
+```bash
+AMU=../amu; G=$(mktemp -d)   # G must be under a path podman can mount
+cp "$AMU/seed/bootstrap/aarch64-linux-static-root.elf" "$G/root.elf"
+F=kotoba/oci/itonami_artifact.kotoba
+end=$(grep -n 'test-round-trip\]))' $F | cut -d: -f1)
+{ echo '(ns oci-itonami-artifact-gate (:export [main]))'
+  tail -n +$((end+1)) $F
+  cat <<'EOF'
+(defn main [] :i64
+  (+ (if (test-index) 1 0) (+ (if (test-classes) 2 0)
+  (+ (if (test-digests) 4 0) (+ (if (test-digest-cid) 8 0)
+  (if (test-round-trip) 16 0))))))
+EOF
+} > "$G/gate.kotoba"
+podman run --rm --platform linux/arm64 --network none -e KEXE_CAP_RESOURCES_35="$G" \
+  -v "$G:$G" -w "$G" docker.io/library/python:3.12-alpine sh -c \
+  "./root.elf compile $G/gate.kotoba --target aarch64-linux --output $G/gate.elf --format static \
+   && chmod +x gate.elf && KEXE_STRUCTURED_REPORT=1 ./gate.elf"
+#   → {:ok true, :target :aarch64-linux, :format :static, ...}
+#   → {:status :ok :result 31 ...}      (31 = all five test-* true)
+```
+
+Measured 2026-10-22 with amu main `f5b11a08` (root sha256 `8256bfd8…dc7`):
+`:result 31`; a wrong expected CID gives `23`, and admitting a non-canonical
+CID gives `15`. The test vectors are sha256 of `""` and of `"itonami"`, with
+CIDs computed independently. Receipt:
+`docs/evidence/itonami-artifact-selfhost-gate-20261022.edn`. The `.cljk`
+suite above is unchanged and was not run.
+
 ## License
 
 Apache-2.0

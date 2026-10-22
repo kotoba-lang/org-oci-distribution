@@ -1,0 +1,34 @@
+;; oci.itonami-artifact selfhost gate receipt (JUN-288). The README "Kotoba
+;; decisions" commands, run 2026-10-22 on this Mac's podman machine (applehv,
+;; arm64 Linux guest). No Node.js, nbb, JVM or babashka in the build or the
+;; run; the container image supplies only `sh`.
+{:schema "oci.selfhost-gate.v1"
+ :date "2026-10-22"
+ :compiler {:repo "kotoba-lang/amu"
+            :commit "f5b11a08"
+            :path "seed/bootstrap/aarch64-linux-static-root.elf"
+            :sha256 "8256bfd8462c2014bf1864f154e88aa7cbb16eda7754aaabf8bf2303dcfc8dc7"}
+ :source {:path "kotoba/oci/itonami_artifact.kotoba"
+          :sha256 "3413a3b38500642f1218a9ee8397c082e7fbe1e8e8c1bf5b15927e287a611c4b"}
+ :driver {:sha256 "56a27334a009a50d3065dea485c9d959550bded456bddbf13ef3e5c449b52b22"
+          :main "1 + 2 + 4 + 8 + 16 over the five test-*"}
+ :host {:runtime "podman --platform linux/arm64 --network none"
+        :image "docker.io/library/python:3.12-alpine"
+        :image-digest "sha256:57f679a3910bed1eb16ad722b904a118bca8586ec8ad39d98dd13350e7062cb2"}
+ :vectors {:empty {:digest "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                   :raw "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+                   :dag-cbor "bafyreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"}
+           :itonami {:digest "sha256:10b899caa9d789b7d21475312dfcf3cc7f79570dc3b4654b515e368c9c19be75"
+                     :raw "bafkreiaqxcm4vkoxrg35efdvgew7z46mp54vododwrsuwuk6g2gjygn6ou"
+                     :dag-cbor "bafyreiaqxcm4vkoxrg35efdvgew7z46mp54vododwrsuwuk6g2gjygn6ou"}
+           :computed-by "an independent sha256 + base32 encoder, outside this gate"}
+ :compile {:report "{:ok true, :target :aarch64-linux, :format :static, :code-bytes 114752, :bytes 123392}"
+           :image-sha256 "41f33fea3700a4f04f20a8cde888c959911e740b9c8025a6506e365a353c9cb4"}
+ :run {:report "{:status :ok :result 31 ...}" :result 31 :expected 31}
+ :negative-controls [{:mutation "test-digest-cid expects a wrong raw CID for sha256(\"\")"
+                      :image-sha256 "8519834e8674bc7077184243c9c33508fffe00b40ab0968fb387d91d40c5b6c3"
+                      :result 23 :expected 23}
+                     {:mutation "test-round-trip expects the non-canonical CID to be admitted"
+                      :image-sha256 "73a21565bef0f589f4f1bd41e4034fbbcbe98732ec21aff4b1048b0422169754"
+                      :result 15 :expected 15}]
+ :not-run ["the nbb .cljk suite (unchanged by this commit, and Node-hosted)"]}
