@@ -1,7 +1,5 @@
 # org-oci-distribution
 
-[![CI](https://github.com/kotoba-lang/org-oci-distribution/actions/workflows/ci.yml/badge.svg)](https://github.com/kotoba-lang/org-oci-distribution/actions/workflows/ci.yml)
-
 **An [OCI Distribution Spec](https://github.com/opencontainers/distribution-spec)
 v1.1 server projected onto [kotobase](https://github.com/kotoba-lang/kotobase)**
 — the same one-datom/document/block-plane pattern as
